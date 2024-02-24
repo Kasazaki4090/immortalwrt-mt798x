@@ -147,6 +147,7 @@ platform_do_upgrade() {
 		;;
 	xiaomi,redmi-router-ax6000 |\
 	bananapi,bpi-r3mini |\
+	bananapi,bpi-r3-nand |\
 	netcore,n60 |\
 	ruijie,rg-x60-pro* |\
 	tplink,tl-xdr608* |\
@@ -154,6 +155,7 @@ platform_do_upgrade() {
 		nand_do_upgrade "$1"
 		;;
 	bananapi,bpi-r3mini-emmc |\
+	bananapi,bpi-r3 |\
 	glinet,gl-mt6000 |\
 	jdcloud,re-cp-03 |\
 	*emmc*)
@@ -178,6 +180,7 @@ platform_check_image() {
 	case "$board" in
 	xiaomi,redmi-router-ax6000* |\
 	bananapi,bpi-r3mini* |\
+	bananapi,bpi-r3* |\
 	netcore,n60 |\
 	ruijie,rg-x60-pro* |\
 	*snand* |\
