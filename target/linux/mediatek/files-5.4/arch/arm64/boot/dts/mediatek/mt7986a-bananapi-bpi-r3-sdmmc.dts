@@ -157,7 +157,7 @@
 
 		phy5: phy@5 {
 			compatible = "ethernet-phy-id03a2.a411";
-			reg = <15>;
+			reg = <5>;
 			reset-gpios = <&pio 6 1>;
 			reset-deassert-us = <20000>;
 			phy-mode = "2500base-x";
@@ -207,6 +207,7 @@
 					reg = <5>;
 					label = "lan5";
 					phy-mode = "2500base-x";
+					phy-handle = <&phy5>;
 
 					fixed-link {
 						speed = <2500>;
