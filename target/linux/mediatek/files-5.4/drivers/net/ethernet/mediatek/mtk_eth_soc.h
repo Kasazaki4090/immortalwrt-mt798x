@@ -225,8 +225,8 @@
 #define MTK_MAX_IRQ_NUM			(4)
 #else
 #define MTK_PDMA_RSS_GLO_CFG		0x2800
-#define MTK_RX_NAPI_NUM			(2)
-#define MTK_MAX_IRQ_NUM			(4)
+#define MTK_RX_NAPI_NUM			(1)
+#define MTK_MAX_IRQ_NUM			(3)
 #endif
 #define MTK_RSS_RING1			(1)
 #define MTK_RSS_EN			BIT(0)
@@ -1160,8 +1160,8 @@ enum mkt_eth_capabilities {
 		      MTK_MUX_GMAC12_TO_GEPHY_SGMII | MTK_QDMA)
 
 #define MT7986_CAPS   (MTK_GMAC1_SGMII | MTK_GMAC2_SGMII | \
-                       MTK_MUX_GMAC12_TO_GEPHY_SGMII | MTK_QDMA | \
-                       MTK_NETSYS_V2 | MTK_NETSYS_RX_V2)
+                       MTK_MUX_GMAC12_TO_GEPHY_SGMII | MTK_QDMA | MTK_NETSYS_RX_V2 | \
+                       MTK_NETSYS_V2)
 
 #define MT7981_CAPS   (MTK_GMAC1_SGMII | MTK_GMAC2_SGMII | MTK_GMAC2_GEPHY | \
 			MTK_MUX_GMAC12_TO_GEPHY_SGMII | MTK_QDMA | \
