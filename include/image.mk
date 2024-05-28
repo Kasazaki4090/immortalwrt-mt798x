@@ -181,18 +181,30 @@ endef
 # $(2) target dtb file
 # $(3) extra CPP flags
 # $(4) extra DTC flags
-define Image/BuildDTB
+define Image/BuildDTB/sub
 	$(TARGET_CROSS)cpp -nostdinc -x assembler-with-cpp \
+		$(DTS_CPPFLAGS) \
 		-I$(DTS_DIR) \
 		-I$(DTS_DIR)/include \
 		-I$(LINUX_DIR)/include/ \
+		-I$(LINUX_DIR)/scripts/dtc/include-prefixes \
 		-undef -D__DTS__ $(3) \
 		-o $(2).tmp $(1)
 	$(LINUX_DIR)/scripts/dtc/dtc -O dtb \
-		-i$(dir $(1)) $(DTC_FLAGS) $(4) \
+		-i$(dir $(1)) $(4) \
+	$(if $(CONFIG_HAS_DT_OVERLAY_SUPPORT),-@) \
 		-o $(2) $(2).tmp
 	$(RM) $(2).tmp
 endef
+
+define Image/BuildDTB
+	$(call Image/BuildDTB/sub,$(1),$(2),$(3),$(DTC_FLAGS) $(DEVICE_DTC_FLAGS) $(4))
+endef
+
+define Image/BuildDTBO
+	$(call Image/BuildDTB/sub,$(1),$(2),$(3),$(DTCO_FLAGS) $(DEVICE_DTCO_FLAGS) $(4))
+endef
+
 
 define Image/mkfs/jffs2/sub-raw
 	$(STAGING_DIR_HOST)/bin/mkfs.jffs2 \
@@ -535,6 +547,17 @@ define Device/Build/dtb
   endif
 
 endef
+
+define Device/Build/dtbo
+  ifndef BUILD_DTSO_$(1)
+  BUILD_DTSO_$(1) := 1
+  $(KDIR)/image-$(1).dtbo: FORCE
+	$(call Image/BuildDTBO,$(strip $(2))/$(strip $(3)).dtso,$$@)
+
+  image_prepare: $(KDIR)/image-$(1).dtbo
+  endif
+
+endef
 endif
 
 define Device/Build/kernel
@@ -542,6 +565,12 @@ define Device/Build/kernel
 	$$(call Device/Build/dtb,$$(notdir $$(dts)), \
 		$$(if $$(DEVICE_DTS_DIR),$$(DEVICE_DTS_DIR),$$(DTS_DIR)), \
 		$$(dts) \
+	) \
+  ))
+  $$(eval $$(foreach dtso,$$(DEVICE_DTS_OVERLAY), \
+	$$(call Device/Build/dtbo,$$(notdir $$(dtso)), \
+		$$(if $$(DEVICE_DTS_DIR),$$(DEVICE_DTS_DIR),$$(DTS_DIR)), \
+		$$(dtso) \
 	) \
   ))
 
@@ -554,22 +583,13 @@ define Device/Build/kernel
     ifdef CONFIG_IB
       install: $$(KDIR_KERNEL_IMAGE)
     endif
-    ifneq ($$(filter squashfs,$(2)),)
-      # Force squashfs to be built before generating kernel image
-      ROOTFS/squashfs/$(1) := \
-	$(KDIR)/root.squashfs$$(strip \
-		$$(if $$(FS_OPTIONS/squashfs),+fs=$$(call param_mangle,$$(FS_OPTIONS/squashfs))) \
-	)$$(strip \
-		$(if $(TARGET_PER_DEVICE_ROOTFS),+pkg=$$(ROOTFS_ID/$(1))) \
-	)
-      $$(KDIR_KERNEL_IMAGE): $$(ROOTFS/squashfs/$(1))
-    endif
     $$(KDIR_KERNEL_IMAGE): $(KDIR)/$$(KERNEL_NAME) $(CURDIR)/Makefile $$(KERNEL_DEPENDS) image_prepare
 	@rm -f $$@
 	$$(call concat_cmd,$$(KERNEL))
 	$$(if $$(KERNEL_SIZE),$$(call Build/check-size,$$(KERNEL_SIZE)))
   endif
 endef
+
 
 define Device/Build/image
   GZ_SUFFIX := $(if $(filter %dtb %gz,$(2)),,$(if $(and $(findstring ext4,$(1)),$(CONFIG_TARGET_IMAGES_GZIP)),.gz))
