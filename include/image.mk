@@ -153,7 +153,7 @@ endif
 
 
 # Disable noisy checks by default as in upstream
-DTC_FLAGS += \
+DTC_WARN_FLAGS := \
   -Wno-unit_address_vs_reg \
   -Wno-simple_bus_reg \
   -Wno-unit_address_format \
@@ -165,6 +165,9 @@ DTC_FLAGS += \
   -Wno-graph_child_address \
   -Wno-graph_port \
   -Wno-unique_unit_address
+
+DTC_FLAGS += $(DTC_WARN_FLAGS)
+DTCO_FLAGS += $(DTC_WARN_FLAGS)
 
 define Image/pad-to
 	dd if=$(1) of=$(1).new bs=$(2) conv=sync
@@ -405,6 +408,9 @@ define Device/Init
   DEVICE_DTS_CONFIG :=
   DEVICE_DTS_DIR :=
   DEVICE_FDT_NUM :=
+  DEVICE_DTS_OVERLAY :=
+  DEVICE_DTC_FLAGS :=
+  DEVICE_DTCO_FLAGS :=
   SOC :=
 
   BOARD_NAME :=

@@ -1,12 +1,12 @@
 /dts-v1/;
 /plugin/;
-#include "mt7986-spim-nand-partition-sd-emmc-boot.dtsi"
 / {
-	model = "Bananapi BPI-R3";
-	compatible = "bananapi,bpi-r3", "mediatek,mt7986a";
-	chosen {
-		bootargs = "console=ttyS0,115200n1 loglevel=8 \
-		earlycon=uart8250,mmio32,0x11002000 \
-		root=PARTLABEL=rootfs rootwait rootfstype=squashfs,f2fs";
+compatible = "bananapi,bpi-r3", "mediatek,mt7986a";
+
+fragment@0 {
+	target-path = "/nmbm_spim_nand/partitions/partition@180000";
+	__overlay__ {
+		status = "okay";
+		};
 	};
 };
