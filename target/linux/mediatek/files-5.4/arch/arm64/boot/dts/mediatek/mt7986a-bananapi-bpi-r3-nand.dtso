@@ -1,11 +1,18 @@
 /dts-v1/;
 /plugin/;
-#include "mt7986-spim-nand-partition.dtsi"
+
 / {
-	model = "Bananapi BPI-R3";
-	compatible = "bananapi,bpi-r3-nand", "mediatek,mt7986a";
-	chosen {
-		bootargs = "console=ttyS0,115200n1 loglevel=8  \
-		earlycon=uart8250,mmio32,0x11002000";
+	compatible = "bananapi,bpi-r3", "mediatek,mt7986a";
+
+	fragment@0 {
+		target-path = "/nmbm_spim_nand/partitions/partition@180000";
+		__overlay__ {
+			status = "okay";
+
+			partition@580000 {
+				label = "ubi";
+				reg = <0x580000 0x4000000>;
+			};
+		};
 	};
 };
