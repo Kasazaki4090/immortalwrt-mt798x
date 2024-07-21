@@ -13,6 +13,9 @@ fi
 uci -q set luci.main.socket="/var/run/ubus.sock"
 uci -q commit luci
 
+/sbin/wifi config
+/sbin/wifi up
+
 #if ! uci -q get system.@imm_init[0].anon_mount > "/dev/null"; then
 #	uci -q set fstab.@global[0].anon_mount="1"
 #	uci -q commit fstab
